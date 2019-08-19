@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Incremental Test</title>
+<script src="js.cookie.js"></script>
+<script src="jquery.js"></script>
+
+<script src="main.js"></script>
+<script src="resource.js"></script>
+<script src="resDelta.js"></script>
+<script src="resourceData.js"></script>
+<link rel="stylesheet" type="text/css" href="test.css">
+</head>
+<body onload="start()">
+
+<span onclick="save()" class ="button">Save</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span onclick="reset()" class ="button">Reset Game</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span onclick="printSave()" class ="button">debug</span>
+<hr />
+<div id="resources"></div>
+</body>
+</html>
