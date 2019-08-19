@@ -1,0 +1,114 @@
+body {
+  background-color: black;
+  color: white;
+  touch-action: manipulation;
+  font-size:1.25em;
+}
+
+.tier {
+  margin: .1em;
+  padding: .25em;
+  background-color: #222222;
+  border-style: ridge;
+  border-width: 2px;
+  border-color: black;
+  clear:both;
+  text-align:center;
+  display: inline-table;
+  width:45%;
+}
+
+.button {
+  background-color: rgba(44, 44, 90, 0.37);
+  font-size: 2em;
+  user-select:none;
+  
+}
+
+.button:hover {
+  background-color: blue;
+  color: yellow;
+}
+
+.button:active {
+  background-color: lightyellow;
+  color: darkblue;
+}
+
+.name {
+  font-size: 1em;
+}
+
+.rLabelNeg {
+  background-color: rgb(36, 0, 0);
+  
+}
+
+.rLabelPos {
+  background-color: rgb(0, 0, 58);
+}
+
+.rLabelNeg,
+.rLabelPos {
+  display:inline-block;
+  border-style: dashed;
+  border-width: .5px;
+  padding-right: .5em;
+  padding-left: .5em;
+  border-color: rgb(82, 82, 82);
+  margin: .25em;
+}
+
+.level {
+  padding-left: 1em;
+}
+
+.aDelta {
+  padding: .1em;
+  float:left;
+  background-color:rgb(32, 9, 43);
+  width:25%;
+}
+
+.tDelta {
+  padding: .1em;
+  float:right;
+  width:25%;
+  background-color:rgb(32, 9, 43);
+}
+
+.viz {
+  word-wrap: break-word;
+  font-size: .75em;
+  max-height: 4.5em;
+  overflow-y: scroll;
+  overflow-x:hidden;
+  max-width: 15em;
+}
+
+.emoji{
+  font-size: 3em;
+  text-shadow: 10px,5px,green;
+}
+
+.emoji:active{
+  text-shadow: 0px 0px rgb(0, 190, 0);
+  color: rgba(145, 145, 145, 0.685);
+}
+
+.emojiOff
+{
+  font-size: 3em;
+  color:transparent;
+  text-shadow: 0 0 red;
+}
+
+.emojiFuture{
+  font-size: 3em;
+  color: transparent;
+  text-shadow: 0 0 darkgray;
+}
+
+.hidden{
+  display:none;
+}
