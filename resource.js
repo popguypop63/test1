@@ -4,8 +4,9 @@ function Resource(identifier, config, allDeltas) {
   this.id = identifier;
   this.tickChance = config.tickChance ? options.tickChance : 1;
   this.activationDelay = config.activationDelay ? config.activationDelay : 0;
-  this.vizRequirements = config.vizRequirements ? config.vizRequirements : [];
-  this.autoViz = !config.vizRequirements;
+  this.autoViz = config.vizRequirements === undefined;
+  this.vizRequirements = config.vizRequirements !== undefined ? config.vizRequirements : [];
+  this.isActivating = false;
   //config
   this.allDeltas = allDeltas;
   //dependant
@@ -14,25 +15,36 @@ function Resource(identifier, config, allDeltas) {
   //.allGroupIDs = []; gets added later
 }
 
-function applyDelta(resource, deltaValue){
-  this.level += deltaValue;
+function applyDelta(resource, deltaValue, context){
+  if(context !== undefined && Math.abs(deltaValue) > 0)
+    console.log(`applyDelta ${deltaValue} to ${resource.id.name}. Context=${context===undefined?"none":context}`);
+  resource.level += deltaValue;
   if(resource.level <= 0) resource.level = 0;
 }
 
 function requestActivation(groupID,resource,amount){
-  return activateResource(groupID,resource,amount);
+  if(this.isActivating) return 0;
+  var resDeltas = GetResDeltasOfGroup(resource.allDeltas, groupID);
+  if (!canAffordResDelta(resource, resDeltas, amount)) return 0;  
+  isActivating = true;
+  window.setTimeout(function(){
+    this.isActivating = false;
+    for (var j = 0; j < amount; j++) 
+      processResourceDeltas(resource, resDeltas);
+  });
+  return amount;
   //Delay WIP
 }
 
-function activateResource(groupID, resource, amount) {
-  var resDeltas = GetResDeltasOfGroup(resource.allDeltas, groupID);
+function activateResourceImmediately(groupID, resource, amount) {
+ 
+  var resDeltas = GetResDeltasOfGroup(resource.allDeltas, groupID)
   //check for affordance
-  if (!canAfford(resource, resDeltas, amount)) return 0;
-  for (var i = 0; i < resDeltas.length; i++) {
-    for (var j = 0; j < amount; j++) {
-      ProcessResourceDelta(resource, resDeltas[i]);
-    }
-  }
+  if (!canAffordResDelta(resource, resDeltas, amount)) return 0;
+  //if (!canAffordResDelta(resource, resDeltas, amount)) return 0;
+  for (var j = 0; j < amount; j++) 
+    processResourceDeltas(resource, resDeltas);
+  //console.log(`activateResource can afford ${groupID} ${resource.id.name} amount=${amount} resDeltas=${resDeltas.length}`);
   return amount;
 }
 
@@ -62,29 +74,40 @@ function updateResourceView(resource) {
     }
     if(v && !resource.visible) 
       console.log(`[view update ${resource.id.name}] all vizReq met`);
-    resource.visReason += `[vizReq]`;
     resource.visible = Boolean(v);
   }
 
-  document.getElementById(`${resource.id.name}Tier`).setAttribute(`class`, resource.visible ? `tier` : `hidden`);
+  document.getElementById(`${resource.id.name}Status`).innerHTML=`${resource.isActivating ? "Activating...":"Ready"}`;
+  document.getElementById(`${resource.id.name}Resource`).setAttribute(`class`, resource.visible ? `resource` : `hidden`);
   if(resource.visible)
   {
-    document.getElementById(`${resource.id.name}Level`).innerHTML = `${Math.floor(resource.level)}`;
+    document.getElementById(`${resource.id.name}Level`).innerHTML = `${formatNumber(Math.floor(resource.level))}`;
     updateViz(resource);
     updateDeltaView(resource);
     //console.log(`updated visible resource ${resource.id.name}`);
+    var firstResDelta = undefined;
+  for(var i = 0; firstResDelta === undefined && i < resource.allDeltas.length; i++)
+    if(resource.allDeltas[i].groupID != TICK)
+      firstResDelta = resource.allDeltas[i];
+      
+  var canAfford = firstResDelta === undefined || (firstResDelta !== undefined && canAffordResDelta(resource, [firstResDelta], activationAmount));
+  document.getElementById(`${resource.id.name}Button`).setAttribute("class", canAfford ? "emoji" : "emoji emojiOff")
   }
 };
 
 //call to update the vizualizations for a resource, not the level display
 function updateViz(resource)
 {
-  var activationStatus=`[ActionStatus_FPO]\n`;
+  /*
   var romanized = (resource.level == 0) ? "" : romanize(Math.floor(resource.level));
   var id = `${resource.id.name}Viz`;
   var el = document.getElementById(id);
   if(el === null) console.log(`ERROR: el is null. id=${id}`);
-  el.innerHTML = `${activationStatus}${romanized}`;
+  el.innerHTML = `${romanized}`;*/
+}
+
+function formatNumber(num) {
+  return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
 
 //dynamic markup
@@ -98,76 +121,132 @@ function updateDeltaView(resource)
     var actionDeltas =  GetResDeltasOfGroup(resource.allDeltas, gid);
     
     //console.log(`Delta: ${resource.id.name} ${gid}`);
+    var label = "";
     for(var actionIndex = 0; actionIndex < actionDeltas.length; actionIndex++)
     {
       var aDelta = actionDeltas[actionIndex];
       if(!aDelta.hidden)
       {
         var divID = `${resource.id.name}_AD_${gid}`;
-        var labelName = aDelta.targetResourceID.name;
-        var labelVal = EvaluateResourceDelta(resource, aDelta, 0,true);
-        var label = labelifyDelta(labelName,labelVal);
+        var total = 0;
+        for(var activation =0; activation < activationAmount;activation++)
+        {
+          total += EvaluateResourceDelta(resource, aDelta, activation,true);
+        }
+        label += labelifyDelta(aDelta.targetResourceID,total);
         
         //console.log(`setting aID=${actionIndex} ${resource.id.name} ${gid}`);
-        aDeltasInner += `<div id='${divID}'onClick='handleActionClick(${resource.id.id},${gid})'>${label}</div>`;
       }
     }
+    aDeltasInner += `<span id='${divID}'onClick=\"handleActionClick(${resource.id.id},\'${gid}\')\"><div>${actionIndex == 0 ? "" : "👆"}${gid}</div>${label}</span>`;
+      
   }//draw all actions 
-  
   document.getElementById(`${resource.id.name}ActivationDeltas`).innerHTML = aDeltasInner;
+  
+  var label = "";
+  //draw tick delta
   var tickDeltas = GetResDeltasOfGroup(resource.allDeltas, TICK);
   for(var i = 0; i < tickDeltas.length; i++)
-  {  
+  { 
     var tickDelta = tickDeltas[i];
-    document.getElementById(`${resource.id.name}TickDelta`).innerHTML = 
-      labelifyDelta(tickDelta.targetResourceID.name, 
-      EvaluateResourceDelta(resource, tickDelta, 0, true));
+    var val = EvaluateResourceDelta(resource, tickDelta, 0, true);
+    //var valPlusOne = EvaluateResourceDelta(resource, tickDelta, 1, true);
+     label += labelifyDelta(tickDelta.targetResourceID, val);
+    //var plusOne = labelifyDelta(tickDelta.targetResourceID, valPlusOne);
   }
+  if(label.length > 0)
+      document.getElementById(`${resource.id.name}TickDelta`).innerHTML = `${label}`;
 };
 
-//must be called during game initialization
-function resourceMarkup(resource)
-{
-  //each group id is essentially an action
-  //draw all but the first action in the list.
-  //the first action is reserved to be fired when the emoji is clicked
-  var aDeltasInner = "";
-  for(var i = 1; resource.allGroupIDs > 1 && i < resource.allGroupIDs.length; i++)
+const CLICK = "CLICK_default";
+const TICK = "TICK_default";
+
+//resource delta prototype
+function resDelta(groupID, targetResourceID, coefs, options) {
+  this.groupID = groupID;
+  this.targetResourceID = targetResourceID;
+  this.a = coefs.a ? coefs.a: 0;
+  this.b = coefs.b ? coefs.b : 0;
+  this.c = coefs.c ? coefs.c : 0;
+
+  this.hidden = options && options.hidden ? options.hidden : false;
+  this.chance = options && options.chance ? options.chance : 1;
+}
+
+//resource delta functions
+
+function resDeltaGroup(groupID, data, options){
+  var group = [];
+  for(var i = 0; i < data.length; i++)
   {
-    var groupID = resource.allGroupIDs[i];
-    //var groupResDeltas = GetResDeltasOfGroup(resource.allDeltas,groupID);
-    aDeltasInner += `<div id='${resource.id.name}_AD_${groupid}' class='actDelta'></div>`;
+    var x = data[i];
+    group[i] = new resDelta(groupID, x.rID, {a:(x.a?x.a:0),b:(x.b?x.b:0),c:(x.c?x.c:0)}, options);
   }
+  return group
+}
+
+function GetResDeltasOfGroup(resDeltas, groupID)
+{   
+  var targetResDeltas = [];
+  for(var i = 0; i < resDeltas.length; i++)
+  {
+    if(resDeltas[i].groupID == groupID)
+    {
+      targetResDeltas[targetResDeltas.length] = resDeltas[i];
+    }
+  }
+  return targetResDeltas;
+}
+
+function canAffordResDelta(resource, resDeltas, amount){
+  //console.log(`can afford? ${resource.id.name} x${amount} ${resDeltas}`);
+ var canAfford = true;
+  for (var j = 0; j < resDeltas.length; j++) {
+    //console.log(`can afford? ${resource.id.name} resDeltas ${j}/${resDeltas.length}`);
+    //each delta needs to be evaluated on it's own, as they target different resources
+    var deltaSum = 0;
+    for (var levelOffset = 0; levelOffset < amount; levelOffset++) {
+      
+      //sum the results of the each upgrade along the way
+      deltaSum += EvaluateResourceDelta(resource, resDeltas[j], levelOffset, false);
+      //console.log(`a.d. ${name} (${this.level}) ${deltaSum}`);
+    }
+    //every delta has to leave the target resource's level at a non negative value
   
-  return `<div class='tier' id='${resource.id.name}Tier'>
-  <div id='${resource.id.name}Name' class='name'>${resource.id.name}</div>
-  <div id='${resource.id.name}Level' class='level'></div>
-  <div id='${resource.id.name}Button' class='clickable emoji' onClick='handleEmojiClick(${resource.id.id})'>${resource.id.emoji}</div>
-  <div id='${resource.id.name}Viz' class='viz'>v</div>
-  <div id='${resource.id.name}ActivationDeltas' class='actions'>${aDeltasInner}</div>
-  <div id='${resource.id.name}TickDelta' class='tickDelta'></div>
-  </div>`; 
+    canAfford &= getResource(resDeltas[j].targetResourceID.id).level + deltaSum >= 0;
+  
+  }
+ return canAfford; 
+} 
+
+function processResourceDeltas(orignatingResource, deltas, context) {
+  if(context !== undefined) 
+    console.log(`PROCESS DELTAS ${orignatingResource.id.name}, context=${context}`);
+    for (var i = 0; i < deltas.length; i++) {
+      processResourceDelta(orignatingResource, deltas[i], context);
+    }
+  }
+
+function processResourceDelta(orignatingResource, resDelta, context)
+{
+  var tr = getResource(resDelta.targetResourceID.id);
+  if(tr !== undefined)
+  {
+    var delta = EvaluateResourceDelta(orignatingResource, resDelta, 0, false)
+    if(context !== undefined) 
+      console.log(`----${resDelta.groupID} ${orignatingResource.id.name}... 
+        delta=${delta} ${resDelta.targetResourceID.name}. CONTEXT=${context}`);
+    applyDelta(tr,delta, context);
+  }
+  else{
+    console.log(`processResourceDelta tr=${tr} ${orignatingResource.id.name}`);
+  }
 }
 
-function labelifyDelta(name, value) {
-  var r = getResource(name);
-  if (!r) return ``;
-  var positive = value > 0;
-  var prefix = positive ? `+` : ``;
-  var displayVal = Math.round(value*100)/100;
-  return `<div class='rLabel${positive?"Pos":"Neg"}'>${r.id.emoji} ${prefix} ${displayVal}</div>`;
-}
-
-function romanize(num) {
-  if (isNaN(num))
-    return NaN;
-  var digits = String(+num).split(""),
-    key = ["", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM",
-               "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC",
-               "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"],
-    roman = "",
-    i = 3;
-  while (i--)
-    roman = (key[+digits.pop() + (i * 10)] || "") + roman;
-  return Array(+digits.join("") + 1).join("M") + roman;
+function EvaluateResourceDelta(orignatingResource, resDelta, levelOffset, ignoreChance){
+  var doDelta = resDelta.chance >= 1 || Math.random() <= resDelta.chance;
+  if(!doDelta && !ignoreChance) return 0;
+  var level = orignatingResource.level + levelOffset;
+  var delta = (resDelta.a * (level * level)) + (resDelta.b * level) + resDelta.c;
+  return delta;
 }
