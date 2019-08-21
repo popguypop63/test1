@@ -3,92 +3,64 @@ body {
   color: white;
   touch-action: manipulation;
   font-size:1.25em;
+  user-select: none;
+  font-family:sans-serif;
 }
-
-.tier {
-  margin: .1em;
-  padding: .25em;
-  background-color: #222222;
-  border-style: ridge;
-  border-width: 2px;
-  border-color: black;
-  clear:both;
-  text-align:center;
-  display: inline-table;
-  width:45%;
-}
-
+/*menu buttons*/
 .button {
   background-color: rgba(44, 44, 90, 0.37);
-  font-size: 2em;
+  font-size: 1.2em;
   user-select:none;
-  
+  border-color:grey;
+  color:grey;
+  border-style:solid;
+  margin-left:1.25em;
 }
-
 .button:hover {
   background-color: blue;
   color: yellow;
 }
-
 .button:active {
   background-color: lightyellow;
   color: darkblue;
 }
 
+/*resources*/
+.resource {
+  margin-left:auto;
+  margin-right:auto;
+  margin: .1em;
+  padding: .25em;
+  background-color: #222222;
+  text-align:center;
+  display: inline-table;
+  width:45%;
+  vertical-align:middle;
+}
+
 .name {
-  font-size: 1em;
-}
-
-.rLabelNeg {
-  background-color: rgb(36, 0, 0);
-  
-}
-
-.rLabelPos {
-  background-color: rgb(0, 0, 58);
-}
-
-.rLabelNeg,
-.rLabelPos {
-  display:inline-block;
-  border-style: dashed;
-  border-width: .5px;
-  padding-right: .5em;
-  padding-left: .5em;
-  border-color: rgb(82, 82, 82);
-  margin: .25em;
-}
-
-.level {
-  padding-left: 1em;
-}
-
-.aDelta {
-  padding: .1em;
+  font-size: 1.25em;
   float:left;
-  background-color:rgb(32, 9, 43);
-  width:25%;
-}
-
-.tDelta {
-  padding: .1em;
-  float:right;
-  width:25%;
-  background-color:rgb(32, 9, 43);
 }
 
 .viz {
   word-wrap: break-word;
   font-size: .75em;
-  max-height: 4.5em;
-  overflow-y: scroll;
-  overflow-x:hidden;
+  max-height: 5em;
+  margin-left:auto;
+  margin-right:auto;
   max-width: 15em;
+  overflow-y: scroll;
 }
 
 .emoji{
   font-size: 3em;
   text-shadow: 10px,5px,green;
+  float:left;
+  background-color:rgba(0, 0, 139, 0.473);
+  outline-style: outset;
+  clear:left;
+  color:black;
 }
 
 .emoji:active{
@@ -99,15 +71,86 @@ body {
 .emojiOff
 {
   font-size: 3em;
-  color:transparent;
+  color:rgba(255, 255, 255, 0.479);
   text-shadow: 0 0 red;
 }
 
 .emojiFuture{
-  font-size: 3em;
   color: transparent;
   text-shadow: 0 0 darkgray;
 }
+
+.actions{
+  margin-top:8px;
+  float:right;
+  width:66%;
+}
+
+.actions span{
+  clear:right;
+  background-color: rgba(153, 50, 204, 0.387);
+  cursor:pointer;
+  user-select: none;
+  border-style: outset;
+  border-color:orchid;
+  padding:1px;
+  margin-left:.5em;
+  margin-right:.5em;
+  margin-bottom:.15em;
+  display:block;
+  text-align:left;
+  font-size: .8em;
+  float:right;
+  width:100%;
+}
+.actions span:hover{
+  background-color:orchid;
+}
+
+.actions span:active{
+  background-color:rgb(156, 82, 154);
+}
+
+.rLabelNeg,
+.rLabelPos {
+  display:inline-block;
+  border-style: dashed;
+  border-width: 1px;
+  padding-right: .25em;
+  padding-left: .25em;
+  margin: .15em;
+  margin-left:.5em;
+}
+
+.rLabelNeg {
+  background-color: rgb(36, 0, 0,.5);
+  border-color: red;
+  float:right;
+}
+
+.rLabelPos {
+  float:left;
+  border-color: green;
+  background-color: rgb(0, 0, 58,.5);
+}
+
+
+.tickDelta{
+  clear:right;
+  background-color: rgba(189, 183, 107, 0.612);
+  margin-left:1em;
+  margin-right:1em;
+  margin-top:3px;
+  margin-bottom:3px;
+  float:right;
+  width:66%;
+  font-size:.8em;
+  }
+.level{
+  float:right;
+  }
+  
+  .status {float:right;}
 
 .hidden{
   display:none;
