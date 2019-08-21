@@ -1,23 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Incremental Test</title>
-<script src="js.cookie.js"></script>
-<script src="jquery.js"></script>
+<title>IdleMind</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
 
 <script src="main.js"></script>
 <script src="resource.js"></script>
-<script src="resDelta.js"></script>
-<script src="resourceData.js"></script>
+<script src="fantasyResourceData.js"></script>
 <link rel="stylesheet" type="text/css" href="test.css">
 </head>
-<body onload="start()">
-
+<body onload="initializeGame()">
+<b style="margin:1em;font-size:1.5em">[Idle Mind]</b>
 <span onclick="save()" class ="button">Save</span>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <span onclick="reset()" class ="button">Reset Game</span>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<!--
 <span onclick="printSave()" class ="button">debug</span>
+
+<hr />
+<span onClick="activationAmount=1" class="button">+1</span>
+<span onClick="activationAmount=10" class="button">+10</span>
+<span onClick="activationAmount=100" class="button">+100</span>
+-->
 <hr />
 <div id="resources"></div>
 </body>
