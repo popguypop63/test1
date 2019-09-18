@@ -1,25 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>IdleMind</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
 <script src="main.js"></script>
 <script src="resource.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
 <link rel="stylesheet" type="text/css" href="style.css">
+<title>IdleMind</title>
 </head>
 <body onload="initializeGame()">
-<b style="margin:1em;font-size:1.5em">[Idle Mind]</b>
+<b style="margin:1em;font-size:1.5em">🧙‍♂️[Idle Mind]</b>
 <span onclick="save()" class ="button">Save</span>
 <span onclick="reset()" class ="button">Reset Game</span>
-<!--
-<span onclick="printSave()" class ="button">debug</span>
+<span onClick="handleSetAllCollapsed(1)" class=button>Collapse All</span>
+<span onClick="handleSetAllCollapsed(0)" class=button>Expand All</span>
+<hr />
 
-<hr />
-<span onClick="activationAmount=1" class="button">+1</span>
-<span onClick="activationAmount=10" class="button">+10</span>
-<span onClick="activationAmount=100" class="button">+100</span>
--->
-<hr />
+<div id="shortbar"></div>
+<hr/>
 <div id="resources"></div>
 </body>
 </html>
