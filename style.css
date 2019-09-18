@@ -2,156 +2,249 @@ body {
   background-color: black;
   color: white;
   touch-action: manipulation;
-  font-size:1.25em;
+  ;
   user-select: none;
-  font-family:sans-serif;
+  font-family: "Lucida Console", Monaco, monospace;
 }
+
+#shortbar {
+  overflow-x: wrap;
+  background-color: rgba(148, 0, 211, 0.32);
+}
+
 /*menu buttons*/
 .button {
   background-color: rgba(44, 44, 90, 0.37);
   font-size: 1.2em;
-  user-select:none;
-  border-color:grey;
-  color:grey;
-  border-style:solid;
-  margin-left:1.25em;
+  user-select: none;
+  border-color: grey;
+  display: inline-block;
+  margin: 2px;
+  color: grey;
+  border-style: solid;
+  margin-left: 1.25em;
 }
+
 .button:hover {
-  background-color: blue;
-  color: yellow;
+  background-color: purple;
+  color: silver;
 }
+
 .button:active {
   background-color: lightyellow;
   color: darkblue;
 }
 
+.hidden {
+  display: none;
+}
+
 /*resources*/
+#resources {
+  margin: 0px;
+  padding: 0;
+  background-color: rgba(0, 0, 0, 0.294);
+  background-image: linear-gradient(rgb(22, 11, 34), black);
+}
+
 .resource {
-  margin-left:auto;
-  margin-right:auto;
-  margin: .1em;
-  padding: .25em;
-  background-color: #222222;
-  text-align:center;
-  display: inline-table;
-  width:45%;
-  vertical-align:middle;
+  padding-bottom: auto;
+  margin: .5em;
+  background-color: #1b1b1b;
+  text-align: center;
+  border-style: solid;
+  border-width: 1px;
+  border-color: silver;
+  display: inline-block;
+  width: 20em;
+  max-width:calc(50vw - 2em);
+  clear: left;
+  vertical-align: top;
+}
+
+div.resourceCollapsed {
+  max-height: 5em;
+  overflow-y: hidden;
+}
+
+.fill {
+  background-color: green;
+  height: 5px;
+  clear: both;
 }
 
 .name {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 1.25em;
-  float:left;
+  font-weight: bold;
+  color: lavender;
+  background-color: rgba(153, 50, 204, 0.469);
+  width: calc(100% - 35px);
+  float: left;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.collapse {
+  color: pink;
+  font-weight: bold;
+  float: right;
+  height: 32px;
+  width: 35px;
+  outline-style: outset;
+  outline-width: 2px;
+  outline-color: pink;
+  background-color: rgb(54, 0, 49);
+}
+
+.level {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  width: 100%;
+  float: left;
+  background-color: rgba(102, 51, 153, 0.408);
+}
+
+.level span {
+  float: right;
+  display: block;
+  background-color: purple;
+}
+
+.desc {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  float: right;
+  clear: right;
+  text-align: left;
+  padding: .5em;
+  width: 60%;
+  color: grey;
+  overflow: hidden;
+  min-height: 3.5em;
+background-image: radial-gradient(rgba(102, 51, 153, 0.32),rgba(0,0,0,0),rgba(0,0,0,0));
 }
 
 .viz {
   word-wrap: break-word;
   font-size: .75em;
   max-height: 5em;
-  margin-left:auto;
-  margin-right:auto;
+  margin-left: auto;
+  margin-right: auto;
   max-width: 15em;
   overflow-y: scroll;
 }
 
-.emoji{
+.emoji {
   font-size: 3em;
-  text-shadow: 10px,5px,green;
-  float:left;
-  background-color:rgba(0, 0, 139, 0.473);
-  outline-style: outset;
-  clear:left;
-  color:black;
+  float: left;
+  background-color: rgba(102, 51, 153, 0.136);
+  margin: 1px;
+  clear: left;
+  max-width: 30%;
+  color: black;
+  display: block;
+  width: 30%;
+  padding-top: .5em;
+  padding-bottom: .5em;
 }
 
-.emoji:active{
-  text-shadow: 0px 0px rgb(0, 190, 0);
+.emoji:hover {
+  text-shadow: 0px 0px rgb(0, 255, .5);
+  outline-color: rgba(165, 0, 165, 0.685);
+  background-color: rgba(135, 0, 135, 0.685);
+}
+
+@keyframes activeEmoji {
+  0% {
+    text-shadow: 0px 0px rgb(0, 0, .5);
+  }
+
+  100% {
+    text-shadow: 0px 0px rgb(0, 255, 0);
+  }
+}
+
+div.emojiActive {
   color: rgba(145, 145, 145, 0.685);
+  animation: activeEmoji .5s infinite;
+  outline-color: green;
+  background-color: rgb(0, 54, 0);
 }
 
-.emojiOff
-{
-  font-size: 3em;
-  color:rgba(255, 255, 255, 0.479);
+div.emojiOff {
+  color: rgba(255, 255, 255, 0.479);
   text-shadow: 0 0 red;
+  outline-color: rgb(105, 0, 0);
+  background-color: rgb(37, 0, 0);
 }
 
-.emojiFuture{
+div.emojiFuture {
   color: transparent;
   text-shadow: 0 0 darkgray;
 }
 
-.actions{
-  margin-top:8px;
-  float:right;
-  width:66%;
+.tickDeltas {
+  clear: right;
+  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(255, 2, 192, 0.66));
+  float: right;
+  width: calc(70% - 2px);
 }
 
-.actions span{
-  clear:right;
-  background-color: rgba(153, 50, 204, 0.387);
-  cursor:pointer;
+.actions {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  width: 100%;
+  clear: both;
+  text-align: center;
+}
+
+.actions span {
+  clear: right;
+  background-image: linear-gradient(rgba(153, 50, 204, 0.387), rgba(0, 0, 0, 0));
+  cursor: pointer;
   user-select: none;
-  border-style: outset;
-  border-color:orchid;
-  padding:1px;
-  margin-left:.5em;
-  margin-right:.5em;
-  margin-bottom:.15em;
-  display:block;
-  text-align:left;
-  font-size: .8em;
-  float:right;
-  width:100%;
-}
-.actions span:hover{
-  background-color:orchid;
+  display: block;
+  float: right;
+  width: 100%;
+  padding-bottom: .5em;
 }
 
-.actions span:active{
-  background-color:rgb(156, 82, 154);
+.actions span.ready:hover {
+  background-color: orchid;
+}
+
+.actions span.notready {
+  background-color: rgba(190, 50, 50, 0.354);
 }
 
 .rLabelNeg,
 .rLabelPos {
-  display:inline-block;
-  border-style: dashed;
-  border-width: 1px;
-  padding-right: .25em;
-  padding-left: .25em;
-  margin: .15em;
-  margin-left:.5em;
+  display: inline-block;
+  padding-right: .1em;
+  padding-left: .1em;
+  margin: -.5px;
+  width: calc(50% - 6px);
 }
 
 .rLabelNeg {
-  background-color: rgb(36, 0, 0,.5);
-  border-color: red;
-  float:right;
+  background-color: rgb(36, 0, 0, .5);
+  float: right;
+  clear: right;
+  text-align: left;
+  position: relative;
+  right: 1px;
 }
 
 .rLabelPos {
-  float:left;
-  border-color: green;
-  background-color: rgb(0, 0, 58,.5);
+  text-align: right;
+  float: left;
+  clear: left;
+  background-color: rgb(0, 0, 58, .5);
+  position: relative;
+  left: 1px;
 }
 
-
-.tickDelta{
-  clear:right;
-  background-color: rgba(189, 183, 107, 0.612);
-  margin-left:1em;
-  margin-right:1em;
-  margin-top:3px;
-  margin-bottom:3px;
-  float:right;
-  width:66%;
-  font-size:.8em;
-  }
-.level{
-  float:right;
-  }
-  
-  .status {float:right;}
-
-.hidden{
-  display:none;
+.status {
+  display: none;
 }
